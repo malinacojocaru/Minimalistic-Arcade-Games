@@ -1,27 +1,12 @@
 import pygame
-import random
 import utils as ut
-
-class Shape:
-    def __init__(self):
-        self.color = random.choice(ut.SHAPE_COLORS)
-        self.shape = random.choice(ut.SHAPES)
-        self.shape_width = len(self.shape[0])
-        self.shape_height = len(self.shape)
-        self.x = (ut.GRID_WIDTH - self.shape_width) // 2
-        self.y = 0
-
-    def draw_shape(self, surface):
-        for i in range(self.shape_height):
-            for j in range(self.shape_width):
-                if self.shape[i][j]:
-                    colored_cell = pygame.Rect((self.x + i) * ut.GRID_SIZE, (self.y + j) * ut.GRID_SIZE, ut.GRID_SIZE, ut.GRID_SIZE)
-                    pygame.draw.rect(surface, self.color, colored_cell)
 
 class Game:
     def __init__(self):
         self.grid = [[0 for _ in range(ut.GRID_WIDTH)] for _ in range(ut.GRID_HEIGHT)]
         self.playing = True
+        self.new_shape = True
+        self.last_fall_time = pygame.time.get_ticks()
     
     def draw_grid(self, surface):
         for y in range(ut.GRID_HEIGHT):
@@ -31,8 +16,22 @@ class Game:
     
     def draw(self, surface):
         self.draw_grid(surface)
-        shape = Shape()
-        shape.draw_shape(surface)
+        if self.new_shape:
+            self.shape = ut.Shape()
+        self.shape.draw_shape(surface)
+
+    def shape_fall(self):
+        now = pygame.time.get_ticks()
+        if now - self.last_fall_time > 500:
+            self.shape.y += 1
+            self.last_fall_time = now
+
+    def move_shape_left(self):
+        self.shape.x -= 1
+
+    def move_shape_right(self):
+        self.shape.x += 1
+
 
 def main():
     pygame.init()
@@ -40,18 +39,22 @@ def main():
     pygame.display.set_caption("Tetris")
     game = Game()
 
-    test_draw = True
-
     while game.playing:
-        #window.fill(ut.BLACK)
+        window.fill(ut.BLACK)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 game.playing = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    game.move_shape_left()
+                elif event.key == pygame.K_RIGHT:
+                    game.move_shape_right()
 
-        if test_draw:
-            game.draw(window)
-        test_draw = False
+
+        game.draw(window)
+        game.new_shape = False
+        game.shape_fall()
         pygame.display.flip()
 
 if __name__ == "__main__":

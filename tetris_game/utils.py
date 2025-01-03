@@ -1,3 +1,6 @@
+import random
+import pygame
+
 SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 600
 GRID_SIZE = 30
@@ -37,3 +40,22 @@ SHAPES = [
     [[0, 0, 1],
      [1, 1, 1]],
 ]
+
+class Shape:
+    def __init__(self):
+        self.color = random.choice(SHAPE_COLORS)
+        self.shape = random.choice(SHAPES)
+        self.shape_width = len(self.shape[0])
+        self.shape_height = len(self.shape)
+        self.x = (GRID_WIDTH - self.shape_width) // 2
+        self.y = 0
+
+    def draw_shape(self, surface):
+        for i in range(self.shape_height):
+            for j in range(self.shape_width):
+                if self.shape[i][j]:
+                    colored_cell = pygame.Rect((self.x + i) * GRID_SIZE,
+                                               (self.y + j) * GRID_SIZE,
+                                               GRID_SIZE,
+                                               GRID_SIZE)
+                    pygame.draw.rect(surface, self.color, colored_cell)
