@@ -1,7 +1,7 @@
 import random
 import pygame
 
-SCREEN_WIDTH = 600
+SCREEN_WIDTH = 330
 SCREEN_HEIGHT = 600
 GRID_SIZE = 30
 GRID_WIDTH = SCREEN_WIDTH // GRID_SIZE
@@ -54,8 +54,15 @@ class Shape:
         for i in range(self.shape_height):
             for j in range(self.shape_width):
                 if self.shape[i][j]:
-                    colored_cell = pygame.Rect((self.x + i) * GRID_SIZE,
-                                               (self.y + j) * GRID_SIZE,
+                    colored_cell = pygame.Rect((self.x + j) * GRID_SIZE,
+                                               (self.y + i) * GRID_SIZE,
                                                GRID_SIZE,
                                                GRID_SIZE)
                     pygame.draw.rect(surface, self.color, colored_cell)
+
+    def rotate(self):
+        reversed_shape = self.shape[::-1]
+        transposed_shape = zip(*reversed_shape)
+        new_shape = [list(row) for row in transposed_shape]
+        self.shape = new_shape
+        self.shape_width, self.shape_height = self.shape_height, self.shape_width

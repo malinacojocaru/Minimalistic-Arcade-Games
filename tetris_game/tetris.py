@@ -17,20 +17,47 @@ class Game:
     def draw(self, surface):
         self.draw_grid(surface)
         if self.new_shape:
-            self.shape = ut.Shape()
-        self.shape.draw_shape(surface)
+            self.block = ut.Shape()
+        self.block.draw_shape(surface)
+
+    def valid_pos(self, x = 0, y = 0) -> bool:
+        for i in range(self.block.shape_height):
+            for j in range(self.block.shape_width):
+                if self.block.shape[i][j]:
+                    new_x = self.block.x + j + x
+                    new_y = self.block.y + i + y
+                    if (
+                        new_x < 0 or
+                        new_x >= ut.GRID_WIDTH or
+                        new_y >= ut.GRID_HEIGHT or
+                        (new_y >= 0 and self.grid[new_y][new_x])
+                    ):
+                        return False
+        return True
 
     def shape_fall(self):
         now = pygame.time.get_ticks()
         if now - self.last_fall_time > 500:
-            self.shape.y += 1
+            if self.valid_pos(0, 1):
+                self.block.y += 1
             self.last_fall_time = now
 
     def move_shape_left(self):
-        self.shape.x -= 1
+        if self.valid_pos(-1, 0):
+            self.block.x -= 1
 
     def move_shape_right(self):
-        self.shape.x += 1
+        if self.valid_pos(1, 0):
+            self.block.x += 1
+
+    def rotate(self):
+        original_shape = self.block.shape
+        self.block.rotate()
+        if not self.valid_pos():
+            self.block.shape_width, self.block.shape_height = self.block.shape_height, self.block.shape_width
+            self.block.shape = original_shape
+
+
 
 
 def main():
@@ -50,11 +77,12 @@ def main():
                     game.move_shape_left()
                 elif event.key == pygame.K_RIGHT:
                     game.move_shape_right()
+                elif event.key == pygame.K_UP:
+                    game.rotate()
 
-
+        game.shape_fall()
         game.draw(window)
         game.new_shape = False
-        game.shape_fall()
         pygame.display.flip()
 
 if __name__ == "__main__":
