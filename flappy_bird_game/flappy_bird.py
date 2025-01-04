@@ -18,6 +18,8 @@ game_over = pygame.image.load("photos/game_over.png")
 
 
 speed = 1;
+score = 0
+font = pygame.font.SysFont('comicsans', 26)
 
 start_pos = (100,200)
 
@@ -74,6 +76,10 @@ class Pipe(pygame.sprite.Sprite):
         self.rect.x = self.rect.x - speed
         if self.rect.x <= -WIDTH:
             self.kill()
+        if start_pos[0] > self.rect.topright[0] and self.passed == False:
+            self.passed = True
+            global score
+            score = score + 0.5
 
 def main():
     x = 0
@@ -82,6 +88,9 @@ def main():
 
     ground = pygame.sprite.Group()
     ground.add(Ground(x, y))
+
+    global score
+    score = 0
 
     pipes = pygame.sprite.Group()
 
@@ -105,9 +114,20 @@ def main():
         pipes.draw(window)
         ground.draw(window)
 
+        text = font.render(f"Score: {int(score)}", True, (255, 255, 255))
+        window.blit(text, (20, 20))
+
         bird.update(user_input)
         ground.update()
         pipes.update()
+
+        collisions = pygame.sprite.spritecollide(bird.sprite, pipes, False)
+        ground_collisions = pygame.sprite.spritecollide(bird.sprite, ground, False)
+
+        if collisions or ground_collisions:
+            bird.sprite.alive = False
+            # running = False
+            window.blit(game_over, (160, 260))
 
         if timer <= 0:
             x_top = 550
