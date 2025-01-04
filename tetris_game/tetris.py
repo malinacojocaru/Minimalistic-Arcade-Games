@@ -1,5 +1,6 @@
 import pygame
 import utils as ut
+import read as rd
 
 class Game:
 	def __init__(self):
@@ -34,8 +35,6 @@ class Game:
 	
 	def draw(self, surface):
 		self.draw_grid(surface)
-		if self.new_shape:
-			self.block = ut.Shape()
 		self.block.draw_shape(surface)
 		for i in range(ut.GRID_HEIGHT):
 			for j in range(ut.GRID_WIDTH):
@@ -46,6 +45,7 @@ class Game:
 											   ut.GRID_SIZE)
 					pygame.draw.rect(surface, self.grid[i][j], colored_cell)
 		self.draw_info_panel(surface)
+		pygame.display.flip()
 		
 
 	def valid_pos(self, x = 0, y = 0) -> bool:
@@ -138,34 +138,65 @@ def main():
 	game = Game()
 	clock = pygame.time.Clock()
 	lost = True
+	(old_x, old_y) = ('center', 'center')
 
 	while game.playing:
 		window.fill(ut.BLACK)
+		if game.new_shape:
+			game.block = ut.Shape()
+			game.new_shape = False
+
+		x, y, _ = rd.parse_data()
+		if y == 'up':
+			if old_y == y:
+				y = 'center'
+			else:
+				old_y = y
+		else:
+			old_y = 'center'
+
+		if x != 'center':
+			if old_x == x:
+				x = 'center'
+			else:
+				old_x = x
+		else:
+			old_x = 'center'
 
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				game.playing = False
 				lost = False
-			elif event.type == pygame.KEYDOWN:
-				if event.key == pygame.K_LEFT:
-					game.move_shape_left()
-				elif event.key == pygame.K_RIGHT:
-					game.move_shape_right()
-				elif event.key == pygame.K_UP:
-					game.rotate()
-				elif event.key == pygame.K_DOWN:
-					game.fast_fall = True
-				elif event.key == pygame.K_RETURN:
-					return
-			elif event.type == pygame.KEYUP:
-				if event.key == pygame.K_DOWN:
-					game.fast_fall = False
+
+		if x == 'left':
+			game.move_shape_left()
+		if x == 'right':
+			game.move_shape_right()
+			x = 'center'
+		if y == 'up':
+			game.rotate()
+		if y == 'down':
+			game.fast_fall = True
+		if y == 'center':
+			game.fast_fall = False
+			# elif event.type == pygame.KEYDOWN:
+			# 	if event.key == pygame.K_LEFT:
+			# 		game.move_shape_left()
+			# 	elif event.key == pygame.K_RIGHT:
+			# 		game.move_shape_right()
+			# 	elif event.key == pygame.K_UP:
+			# 		game.rotate()
+			# 	elif event.key == pygame.K_DOWN:
+			# 		game.fast_fall = True
+			# 	elif event.key == pygame.K_RETURN:
+			# 		return
+			# elif event.type == pygame.KEYUP:
+			# 	if event.key == pygame.K_DOWN:
+			# 		game.fast_fall = False
 
 		game.shape_fall()
 		game.draw(window)
-		game.new_shape = False
-		pygame.display.flip()
-		clock.tick(30)
+		clock.tick(60)
 	
 	if lost:
 		game.game_over(window)

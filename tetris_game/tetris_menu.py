@@ -42,4 +42,4 @@ def menu():
 					elif options[selected] == "Quit":
 						pygame.quit()
 						return
-		clock.tick(30)
+		clock.tick(60)
