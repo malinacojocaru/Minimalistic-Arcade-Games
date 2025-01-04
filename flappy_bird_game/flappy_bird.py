@@ -1,1 +1,77 @@
 
+import pygame
+from sys import exit
+
+pygame.init()
+clock = pygame.time.Clock()
+
+WIDTH, HEIGHT = 550, 720
+window = pygame.display.set_mode((WIDTH, HEIGHT))
+
+background = pygame.image.load("photos/background.png")
+bird_upflap = pygame.image.load("photos/bird_up.png")
+ground = pygame.image.load("photos/ground.png")
+pipe_bottom = pygame.image.load("photos/pipe_bottom.png")
+pipe_top = pygame.image.load("photos/pipe_top.png")
+game_over = pygame.image.load("photos/game_over.png")
+
+
+speed = 1;
+
+start_pos = (100,200)
+
+class Bird(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = bird_upflap
+        self.rect = self.image.get_rect()
+        self.rect.center = start_pos
+        self.alive = True
+
+
+class Ground(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = ground
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+
+    def update(self):
+        self.rect.x = self.rect.x - speed
+        if self.rect.x <= -WIDTH:
+            self.kill()
+
+def quit_game():
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            exit()
+
+def main():
+    x = 0
+    y = 520
+    ground = pygame.sprite.Group()
+    ground.add(Ground(x, y))
+
+    bird = pygame.sprite.GroupSingle()
+    bird.add(Bird())
+
+    running = True
+    while running:
+        quit_game()
+        window.fill((0, 0, 0))
+        window.blit(background, (0, 0))
+
+        if len(ground) < 2:
+            ground.add(Ground(WIDTH, y))
+
+        bird.draw(window)
+        ground.draw(window)
+
+        bird.update()
+        ground.update()
+
+        pygame.display.update()
+
+main()
