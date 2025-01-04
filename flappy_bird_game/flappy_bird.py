@@ -28,6 +28,18 @@ class Bird(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = start_pos
         self.alive = True
+        self.velocity = 0
+
+    def update(self, user_input):
+        self.rect.y = self.rect.y + 1
+        self.velocity = self.velocity + 0.5
+        if self.velocity > 8:
+            self.velocity = 8
+        if self.rect.y < 500:
+            self.rect.y = self.rect.y + self.velocity
+        if user_input[pygame.K_SPACE] and self.rect.y > 50 and self.alive == True:
+            self.velocity = -8
+        self.image = pygame.transform.rotate(bird_upflap, -self.velocity * 4)
 
 
 class Ground(pygame.sprite.Sprite):
@@ -82,6 +94,10 @@ def main():
         window.fill((0, 0, 0))
         window.blit(background, (0, 0))
 
+        user_input = pygame.key.get_pressed()
+
+        clock.tick(60);
+
         if len(ground) < 2:
             ground.add(Ground(WIDTH, y))
 
@@ -89,8 +105,7 @@ def main():
         pipes.draw(window)
         ground.draw(window)
 
-
-        bird.update()
+        bird.update(user_input)
         ground.update()
         pipes.update()
 
