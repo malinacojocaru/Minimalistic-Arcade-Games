@@ -1,6 +1,7 @@
 
 import pygame
 import random
+import time
 from sys import exit
 
 pygame.init()
@@ -20,6 +21,7 @@ game_over = pygame.image.load("photos/game_over.png")
 speed = 1;
 score = 0
 font = pygame.font.SysFont('comicsans', 26)
+menu_font = pygame.font.SysFont('monospace', 40)
 
 start_pos = (100,200)
 
@@ -117,19 +119,20 @@ def main():
         text = font.render(f"Score: {int(score)}", True, (255, 255, 255))
         window.blit(text, (20, 20))
 
+        if bird.sprite.alive == True:
+            ground.update()
+            pipes.update()
         bird.update(user_input)
-        ground.update()
-        pipes.update()
 
         collisions = pygame.sprite.spritecollide(bird.sprite, pipes, False)
         ground_collisions = pygame.sprite.spritecollide(bird.sprite, ground, False)
 
         if collisions or ground_collisions:
             bird.sprite.alive = False
-            # running = False
+            running = False
             window.blit(game_over, (160, 260))
 
-        if timer <= 0:
+        if timer <= 0 and bird.sprite.alive == True:
             x_top = 550
             x_bottom = 550
             y_top = random.randint(-650, -500)
@@ -138,6 +141,74 @@ def main():
             pipes.add(Pipe(x_bottom, y_bottom, pipe_bottom))
             timer = random.randint(200, 250)
         timer = timer - 1
+
+        pygame.display.update()
+
+    time.sleep(2)
+    window.fill((0, 0, 0))
+    window.blit(background, (0, 0))
+
+    text = menu_font.render(f"Menu", True, (16, 51, 23))
+    window.blit(text, (225, 70))
+
+    pygame.draw.rect(window, (16, 51, 23), pygame.Rect(125, 160, 300, 100), 2)
+    pygame.draw.rect(window, (0, 0, 0), pygame.Rect(125, 350, 300, 100), 2)
+    pygame.draw.rect(window, (0, 0, 0), pygame.Rect(125, 540, 300, 100), 2)
+
+    text = menu_font.render(f"Play again", True, (0, 0, 0))
+    window.blit(text, (155, 180))
+
+    text = menu_font.render(f"Main menu", True, (0, 0, 0))
+    window.blit(text, (160, 370))
+
+    text = menu_font.render(f"Exit", True, (0, 0, 0))
+    window.blit(text, (230, 560))
+
+    pygame.display.update()
+
+    button_pressed = False
+    current = 1
+    while button_pressed == False:
+        quit_game()
+        user_input = pygame.key.get_pressed()
+
+        pygame.draw.rect(window, (0, 0, 0), pygame.Rect(125, 160, 300, 100), 2)
+        pygame.draw.rect(window, (0, 0, 0), pygame.Rect(125, 350, 300, 100),  2)
+        pygame.draw.rect(window, (0, 0, 0), pygame.Rect(125, 540, 300, 100),  2)
+        
+        if user_input[pygame.K_UP]:
+            current = current - 1
+            if current < 1:
+                current = 3
+            
+        elif user_input[pygame.K_DOWN]:
+            current = current + 1
+            if current > 3:
+                current = 1
+            
+        if current == 1:
+            pygame.draw.rect(window, (255, 255, 255), pygame.Rect(125, 160, 300, 100), 2)
+            text = menu_font.render(f"Play again", True, (0, 0, 0))
+            window.blit(text, (155, 180))
+        elif current == 2:
+            pygame.draw.rect(window, (255, 255, 255), pygame.Rect(125, 350, 300, 100), 2)
+            text = menu_font.render(f"Main menu", True, (0, 0, 0))
+            window.blit(text, (160, 370))
+        elif current == 3:
+            pygame.draw.rect(window, (255, 255, 255), pygame.Rect(125, 540, 300, 100), 2)
+            text = menu_font.render(f"Exit", True, (0, 0, 0))
+            window.blit(text, (230, 560))
+
+        if user_input[pygame.K_SPACE]:
+            button_pressed = True
+            if current == 1:
+                main()
+            # elif current == 2:
+            #     main_menu()
+            elif current == 3:
+                pygame.quit()
+                exit()
+        time.sleep(0.1)
 
         pygame.display.update()
 
