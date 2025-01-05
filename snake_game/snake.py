@@ -55,7 +55,7 @@ def lost_menu(selected_option):
     screen.blit(quit_button, quit_button_)
     
 def check(length_of_snake):
-    if length_of_snake > 1:
+    if length_of_snake > 30:
         backgrd2 = pygame.image.load("./utils/happy_face.jpg")
         backgrd2 = pygame.transform.scale(backgrd2, (WIDTH, HEIGHT))
         screen.blit(backgrd2, (0,0))
