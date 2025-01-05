@@ -42,24 +42,31 @@ def main_menu():
         
         x_dir, y_dir, pressed = read.parse_data()
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-                sys.exit()
-
-
         if y_dir == "up":
             selected_option = "play"
         elif y_dir == "down":
             selected_option = "quit"
         
-        if pressed:
-            if selected_option == "play":
-                    snake.gameLoop()
-            elif selected_option == "quit":
+        # if pressed:
+        #     if selected_option == "play":
+        #             snake.gameLoop()
+        #     elif selected_option == "quit":
+        #         running = False
+        #         sys.exit()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
                 running = False
                 sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    if selected_option == "play":
+                            snake.gameLoop()
+                    elif selected_option == "quit":
+                        running = False
+                        sys.exit()
         
         pygame.display.flip()
 
-main_menu()
+#imi trebuie asta ca sa nu se execute direct la import in menu_all
+if __name__ == "__main__":
+    main_menu()

@@ -111,13 +111,13 @@ class Game:
 
 	def game_over(self, window):
 		window.fill(ut.BLACK)
-		font = pygame.font.Font("./assets/CourierPrime-Bold.ttf", 15)
+		font = pygame.font.Font("./Minimalistic-Arcade-Games/tetris_game/assets/CourierPrime-Bold.ttf", 15)
 
 		start_x = ut.SCREEN_WIDTH // 4 - 70
 		start_y = ut.SCREEN_HEIGHT // 2 - 70
 		spacing = 20
 
-		with open("./assets/game_over.txt", "r") as file:
+		with open("./Minimalistic-Arcade-Games/tetris_game/assets/game_over.txt", "r") as file:
 			lines = file.readlines()
 
 		i = 0

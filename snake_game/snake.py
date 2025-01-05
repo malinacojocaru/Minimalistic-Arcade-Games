@@ -72,11 +72,16 @@ def check(length_of_snake):
             elif y_dir == "down":
                 selected_option = "quit"
             
-            if pressed:
-                if selected_option == "continue":
-                    gameLoop()
-                elif selected_option == "quit":
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
                     sys.exit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:
+                        if selected_option == "continue":
+                            gameLoop()
+                        elif selected_option == "quit":
+                            sys.exit()
             pygame.display.flip()
 
 def gameLoop():
@@ -119,19 +124,19 @@ def gameLoop():
                 elif y_dir == "down":
                     selected_option = "quit"
                 
-                if pressed:
-                    if selected_option == "again":
-                        gameLoop()
-                    elif selected_option == "quit":
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        running = False
                         sys.exit()
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_RETURN:
+                            if selected_option == "again":
+                                gameLoop()
+                            elif selected_option == "quit":
+                                sys.exit()
                 pygame.display.flip()
 
         x_dir, y_dir, pressed = read.parse_data()
-        #asteapta pana cand se intalneste un eveniment
-        for e in pygame.event.get():
-            #daca s-a inchis fereastra
-            if e.type == pygame.QUIT:
-                game_over = True
 
         if x_dir == "left":
             x_change = -BLOCK_SIZE
