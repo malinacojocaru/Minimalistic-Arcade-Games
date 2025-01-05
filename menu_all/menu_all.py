@@ -5,10 +5,12 @@ import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../snake_game")))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../tetris_game")))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../flappy_bird_game")))
 import snake
 import snake_menu
 import read
 import tetris_menu
+import flappy_menu
 
 #trebuie rulat cu asta python -m Minimalistic-Arcade-Games.menu_all.menu_all
 
@@ -77,13 +79,8 @@ def menu_games():
                         snake_menu.main_menu()
                     elif selected_option == "tetris":
                         tetris_menu.menu()
-
-            # elif selected_option == "flappy_bird":
-            #     #jocul de flappy
-            #     snake.gameLoop()
-            # elif selected_option == "tetris":
-            #     #jocul de tetris
-            #     snake.gameLoop()
+                    elif selected_option == "flappy_bird":
+                        flappy_menu.flappy_menu()
              
         pygame.display.flip()
 
