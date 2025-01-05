@@ -2,6 +2,8 @@
 import pygame
 import random
 import time
+import read
+
 from sys import exit
 
 pygame.init()
@@ -41,7 +43,7 @@ class Bird(pygame.sprite.Sprite):
             self.velocity = 8
         if self.rect.y < 500:
             self.rect.y = self.rect.y + self.velocity
-        if user_input[pygame.K_SPACE] and self.rect.y > 50 and self.alive == True:
+        if user_input == True and self.rect.y > 50 and self.alive == True:
             self.velocity = -8
         self.image = pygame.transform.rotate(bird_upflap, -self.velocity * 4)
 
@@ -105,7 +107,11 @@ def main():
         window.fill((0, 0, 0))
         window.blit(background, (0, 0))
 
-        user_input = pygame.key.get_pressed()
+        x_dir, y_dir, pressed = read.parse_data()
+        if pressed == True or y_dir == "up":
+            user_input = True
+        else:
+            user_input = False
 
         clock.tick(60);
 
@@ -170,18 +176,18 @@ def main():
     current = 1
     while button_pressed == False:
         quit_game()
-        user_input = pygame.key.get_pressed()
+        x_dir, y_dir, pressed = read.parse_data()
 
         pygame.draw.rect(window, (0, 0, 0), pygame.Rect(125, 160, 300, 100), 2)
         pygame.draw.rect(window, (0, 0, 0), pygame.Rect(125, 350, 300, 100),  2)
         pygame.draw.rect(window, (0, 0, 0), pygame.Rect(125, 540, 300, 100),  2)
         
-        if user_input[pygame.K_UP]:
+        if y_dir == "up":
             current = current - 1
             if current < 1:
                 current = 3
             
-        elif user_input[pygame.K_DOWN]:
+        elif y_dir == "down":
             current = current + 1
             if current > 3:
                 current = 1
@@ -199,12 +205,12 @@ def main():
             text = menu_font.render(f"Exit", True, (0, 0, 0))
             window.blit(text, (230, 560))
 
-        if user_input[pygame.K_SPACE]:
+        if pressed == True:
             button_pressed = True
             if current == 1:
                 main()
-            # elif current == 2:
-            #     main_menu()
+            elif current == 2:
+                main_menu()
             elif current == 3:
                 pygame.quit()
                 exit()
