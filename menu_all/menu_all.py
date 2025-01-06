@@ -77,10 +77,13 @@ def menu_games():
                 if event.key == pygame.K_RETURN:
                     if selected_option == "snake":
                         snake_menu.main_menu()
+                        return
                     elif selected_option == "tetris":
                         tetris_menu.menu()
+                        return
                     elif selected_option == "flappy_bird":
                         flappy_menu.flappy_menu()
+                        return
              
         pygame.display.flip()
 

@@ -150,12 +150,13 @@ def flappy_main():
             time.sleep(1)
             window.fill((0,0,0))
             window.blit(background, (0,0))
+            ser.close()
 
         if timer <= 0 and bird.sprite.alive == True:
             x_top = 550
             x_bottom = 550
             y_top = random.randint(-650, -500)
-            y_bottom = y_top + random.randint(150, 200) + pipe_bottom.get_height()
+            y_bottom = y_top + random.randint(170, 220) + pipe_bottom.get_height()
             pipes.add(Pipe(x_top, y_top, pipe_top))
             pipes.add(Pipe(x_bottom, y_bottom, pipe_bottom))
             timer = random.randint(200, 250)

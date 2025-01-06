@@ -179,20 +179,6 @@ def main():
 			game.fast_fall = True
 		if y == 'center':
 			game.fast_fall = False
-			# elif event.type == pygame.KEYDOWN:
-			# 	if event.key == pygame.K_LEFT:
-			# 		game.move_shape_left()
-			# 	elif event.key == pygame.K_RIGHT:
-			# 		game.move_shape_right()
-			# 	elif event.key == pygame.K_UP:
-			# 		game.rotate()
-			# 	elif event.key == pygame.K_DOWN:
-			# 		game.fast_fall = True
-			# 	elif event.key == pygame.K_RETURN:
-			# 		return
-			# elif event.type == pygame.KEYUP:
-			# 	if event.key == pygame.K_DOWN:
-			# 		game.fast_fall = False
 
 		game.shape_fall()
 		game.draw(window)

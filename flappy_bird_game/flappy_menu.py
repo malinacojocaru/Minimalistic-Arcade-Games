@@ -2,7 +2,7 @@ import pygame
 import time
 from sys import exit
 import flappy_bird
-
+import serial
 
 font = pygame.font.SysFont('comicsans', 26)
 menu_font = pygame.font.SysFont('monospace', 40)
@@ -17,6 +17,7 @@ game_over = pygame.image.load("./Minimalistic-Arcade-Games/flappy_bird_game/util
 
 def flappy_menu():
     pygame.init()
+    ser = serial.Serial('COM3', 115200)
     WIDTH, HEIGHT = 550, 720
     window = pygame.display.set_mode((WIDTH, HEIGHT))
     window.fill((0, 0, 0))
@@ -40,18 +41,28 @@ def flappy_menu():
 
     while True:
         
+        if ser.in_waiting > 0:
+            line = ser.readline().decode('utf-8').strip()
+            data = line.strip(" []").split(", ")
+            try:
+                x_dir, y_dir, button = map(int, data)
+            except ValueError:
+                continue
+            if y_dir < 400:
+                current = 1
+            elif y_dir > 60000:
+                current = 2
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_DOWN:
-                    current = 2
-                elif event.key == pygame.K_UP:
-                    current = 1
-                elif event.key == pygame.K_RETURN:
+                if event.key == pygame.K_RETURN:
                     if current == 1:
+                        ser.close()
                         flappy_bird.flappy_main()
+                        ser = serial.Serial('COM3', 115200)
                         window = pygame.display.set_mode((WIDTH, HEIGHT))
                         window.fill((0, 0, 0))
                         window.blit(background, (0, 0))
