@@ -1,6 +1,7 @@
 import pygame
 import tetris
 import utils as ut
+import read
 
 def menu():
 	pygame.init()
@@ -27,19 +28,23 @@ def menu():
 
 		pygame.display.flip()
 
+		x_dir, y_dir, pressed = read.parse_data()
+
+		if y_dir == "up":
+			selected = 0
+		elif y_dir == "down":
+			selected = 1
+
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				pygame.quit()
 				return
-			elif event.type == pygame.KEYDOWN:
-				if event.key == pygame.K_UP:
-					selected = (selected - 1) % len(options)
-				elif event.key == pygame.K_DOWN:
-					selected = (selected + 1) % len(options)
-				elif event.key == pygame.K_RETURN:
-					if options[selected] == "Play":
+			if event.type == pygame.KEYDOWN:
+				if event.key == pygame.K_RETURN:
+					if selected == 0:
 						tetris.main()
-					elif options[selected] == "Quit":
+					elif selected == 1:
 						pygame.quit()
 						return
+
 		clock.tick(60)

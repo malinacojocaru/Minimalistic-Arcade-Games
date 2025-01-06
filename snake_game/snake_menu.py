@@ -47,12 +47,6 @@ def main_menu():
         elif y_dir == "down":
             selected_option = "quit"
         
-        # if pressed:
-        #     if selected_option == "play":
-        #             snake.gameLoop()
-        #     elif selected_option == "quit":
-        #         running = False
-        #         sys.exit()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
