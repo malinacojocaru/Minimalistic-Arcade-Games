@@ -4,8 +4,10 @@ Minimalistic Arcade Games in Python
 
 FOR TESTING:
 
-    The programm should be executed from the parent of the Minimalistic-Arcade-Games directory
-
+    The programm should be executed from the parent of the Minimalistic-Arcade-Games directory.
+    
+    Please consider that we used COM3 port, change it if needed.
+    
     Command: python -m Minimalistic-Arcade-Games.menu_all.menu_all
 
     For a certain game python3 Minimalistic-Arcade-Games/game_directory/game_menu.py
