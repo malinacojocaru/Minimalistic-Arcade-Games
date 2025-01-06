@@ -1,8 +1,11 @@
+
 import pygame
 import random
 import time
+import serial
+import re
+
 from sys import exit
-import read
 
 pygame.init()
 clock = pygame.time.Clock()
@@ -16,6 +19,7 @@ ground = pygame.image.load("./Minimalistic-Arcade-Games/flappy_bird_game/utils/g
 pipe_bottom = pygame.image.load("./Minimalistic-Arcade-Games/flappy_bird_game/utils/pipe_bottom.png")
 pipe_top = pygame.image.load("./Minimalistic-Arcade-Games/flappy_bird_game/utils/pipe_top.png")
 game_over = pygame.image.load("./Minimalistic-Arcade-Games/flappy_bird_game/utils/game_over.png")
+
 
 speed = 1;
 score = 0
@@ -34,14 +38,13 @@ class Bird(pygame.sprite.Sprite):
         self.velocity = 0
 
     def update(self, user_input):
-        #x_dir, y_dir, pressed = read.parse_data()
         self.rect.y = self.rect.y + 1
         self.velocity = self.velocity + 0.5
         if self.velocity > 8:
             self.velocity = 8
         if self.rect.y < 500:
             self.rect.y = self.rect.y + self.velocity
-        if user_input[pygame.K_SPACE] and self.rect.y > 50 and self.alive == True:
+        if user_input == True and self.rect.y > 50 and self.alive == True:
             self.velocity = -8
         self.image = pygame.transform.rotate(bird_upflap, -self.velocity * 4)
 
@@ -84,6 +87,7 @@ class Pipe(pygame.sprite.Sprite):
             score = score + 0.5
 
 def flappy_main():
+    ser = serial.Serial('COM3', 115200)
     x = 0
     y = 520
     timer = 0
@@ -104,8 +108,19 @@ def flappy_main():
         quit_game()
         window.fill((0, 0, 0))
         window.blit(background, (0, 0))
+        user_input = False
 
-        user_input = pygame.key.get_pressed()
+        if ser.in_waiting > 0:
+            line = ser.readline().decode('utf-8').strip()
+            data = line.strip(" []").split(", ")
+            try:
+                x_dir, y_dir, button = map(int, data)
+            except ValueError:
+                continue
+            if y_dir < 400:
+                user_input = True
+            else:
+                user_input = False
 
         clock.tick(60);
 
@@ -131,84 +146,20 @@ def flappy_main():
             bird.sprite.alive = False
             running = False
             window.blit(game_over, (160, 260))
+            pygame.display.update()
+            time.sleep(1)
+            window.fill((0,0,0))
+            window.blit(background, (0,0))
 
         if timer <= 0 and bird.sprite.alive == True:
             x_top = 550
             x_bottom = 550
             y_top = random.randint(-650, -500)
-            y_bottom = y_top + random.randint(130, 170) + pipe_bottom.get_height()
+            y_bottom = y_top + random.randint(150, 200) + pipe_bottom.get_height()
             pipes.add(Pipe(x_top, y_top, pipe_top))
             pipes.add(Pipe(x_bottom, y_bottom, pipe_bottom))
             timer = random.randint(200, 250)
         timer = timer - 1
-
-        pygame.display.update()
-
-    time.sleep(2)
-    window.fill((0, 0, 0))
-    window.blit(background, (0, 0))
-
-    text = menu_font.render(f"Menu", True, (16, 51, 23))
-    window.blit(text, (225, 70))
-
-    pygame.draw.rect(window, (16, 51, 23), pygame.Rect(125, 160, 300, 100), 2)
-    pygame.draw.rect(window, (0, 0, 0), pygame.Rect(125, 350, 300, 100), 2)
-    pygame.draw.rect(window, (0, 0, 0), pygame.Rect(125, 540, 300, 100), 2)
-
-    text = menu_font.render(f"Play again", True, (0, 0, 0))
-    window.blit(text, (155, 180))
-
-    text = menu_font.render(f"Main menu", True, (0, 0, 0))
-    window.blit(text, (160, 370))
-
-    text = menu_font.render(f"Exit", True, (0, 0, 0))
-    window.blit(text, (230, 560))
-
-    pygame.display.update()
-
-    button_pressed = False
-    current = 1
-    while button_pressed == False:
-        quit_game()
-        user_input = pygame.key.get_pressed()
-
-        pygame.draw.rect(window, (0, 0, 0), pygame.Rect(125, 160, 300, 100), 2)
-        pygame.draw.rect(window, (0, 0, 0), pygame.Rect(125, 350, 300, 100),  2)
-        pygame.draw.rect(window, (0, 0, 0), pygame.Rect(125, 540, 300, 100),  2)
-        
-        if user_input[pygame.K_UP]:
-            current = current - 1
-            if current < 1:
-                current = 3
-            
-        elif user_input[pygame.K_DOWN]:
-            current = current + 1
-            if current > 3:
-                current = 1
-            
-        if current == 1:
-            pygame.draw.rect(window, (255, 255, 255), pygame.Rect(125, 160, 300, 100), 2)
-            text = menu_font.render(f"Play again", True, (0, 0, 0))
-            window.blit(text, (155, 180))
-        elif current == 2:
-            pygame.draw.rect(window, (255, 255, 255), pygame.Rect(125, 350, 300, 100), 2)
-            text = menu_font.render(f"Main menu", True, (0, 0, 0))
-            window.blit(text, (160, 370))
-        elif current == 3:
-            pygame.draw.rect(window, (255, 255, 255), pygame.Rect(125, 540, 300, 100), 2)
-            text = menu_font.render(f"Exit", True, (0, 0, 0))
-            window.blit(text, (230, 560))
-
-        if user_input[pygame.K_SPACE]:
-            button_pressed = True
-            if current == 1:
-                flappy_main()
-            # elif current == 2:
-            #     main_menu()
-            elif current == 3:
-                pygame.quit()
-                exit()
-        time.sleep(0.1)
 
         pygame.display.update()
 
