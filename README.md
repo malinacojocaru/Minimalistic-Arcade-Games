@@ -4,9 +4,9 @@
 > Minimalistic-Arcade-Games
 
 #### Team:
+> - Babacea Alexandru
 > - Cojocaru Malina
 > - Velciu Diana
-> - Babacea Alexandru
 
 #### [Github link](https://github.com/malinacojocaru/Minimalistic-Arcade-Games)
 
