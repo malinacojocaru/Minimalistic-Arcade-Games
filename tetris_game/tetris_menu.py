@@ -1,9 +1,9 @@
 import pygame
 import tetris
 import utils as ut
-import read
+import read as rd
 
-def menu():
+def tetris_menu():
 	pygame.init()
 	window = pygame.display.set_mode((600, 600))
 	pygame.display.set_caption("Tetris Menu")
@@ -28,7 +28,7 @@ def menu():
 
 		pygame.display.flip()
 
-		x_dir, y_dir, pressed = read.parse_data()
+		_, y_dir, _ = rd.parse_data()
 
 		if y_dir == "up":
 			selected = 0
@@ -48,3 +48,6 @@ def menu():
 						return
 
 		clock.tick(60)
+
+if __name__ == "__main__":
+	tetris_menu()

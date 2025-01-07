@@ -1,8 +1,12 @@
 import serial
-import pygame
+import os
+import platform
 
-port = 'COM3'  # Portul serial al Pico
-baudrate = 115200
+if platform.system() == "Windows":
+    PORT = os.getenv('PORT', 'COM3')
+else:
+    PORT = os.getenv('PORT', '/dev/ttyACM0')
+BAUDRATE = 115200
 
 def smooth_data(old_value, new_value, threshold=2000):
     if abs(new_value - old_value) > threshold:
@@ -11,7 +15,7 @@ def smooth_data(old_value, new_value, threshold=2000):
 
 def parse_data():
     previous_values = [0, 0, 0]
-    with serial.Serial(port, baudrate) as ser:
+    with serial.Serial(PORT, BAUDRATE) as ser:
         while True:
             line = ser.readline().decode('utf-8').strip()
             data = line.strip(" []").split(", ")
@@ -26,8 +30,6 @@ def parse_data():
             x = smooth_data(previous_values[0], x)
             y = smooth_data(previous_values[1], y)
             button = smooth_data(previous_values[2], button)
-
-            #print(f"{x} | {y} | {button}")
 
             previous_values = [x, y, button]
             x_dir = 'center'

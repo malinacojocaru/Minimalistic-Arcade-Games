@@ -1,12 +1,10 @@
 import pygame
 import sys
 import os
-# print(os.path.abspath(os.path.join(os.path.dirname(__file__), "../snake_game")))
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../snake_game")))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../tetris_game")))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../flappy_bird_game")))
-import snake
 import snake_menu
 import read
 import tetris_menu
@@ -26,7 +24,8 @@ pygame.display.set_caption("Menu")
 
 def draw_menu_games(selected_option):
 
-    background = pygame.image.load("./Minimalistic-Arcade-Games/menu_all/utils/menu_all_pic.jpg")
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    background = pygame.image.load(os.path.join(script_dir, "utils/menu_all_pic.jpg"))
     background = pygame.transform.scale(background, (WIDTH, HEIGHT))
     screen.blit(background, (0,0))
     
@@ -49,13 +48,22 @@ def draw_menu_games(selected_option):
     screen.blit(tetris_game, tetris_game_)
 
 def menu_games():
+    old_y_dir = "center"
     selected_option = "snake"
     running = True
     
     while running:
         draw_menu_games(selected_option)
         
-        x_dir, y_dir, pressed = read.parse_data()
+        _, y_dir, _ = read.parse_data()
+
+        if y_dir != "center":
+            if old_y_dir == y_dir:
+                y_dir = "center"
+            else:
+                old_y_dir = y_dir
+        else:
+            old_y_dir = "center"
 
         if y_dir == "up":
             if selected_option == "flappy_bird":
@@ -76,10 +84,10 @@ def menu_games():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     if selected_option == "snake":
-                        snake_menu.main_menu()
+                        snake_menu.snake_menu()
                         return
                     elif selected_option == "tetris":
-                        tetris_menu.menu()
+                        tetris_menu.tetris_menu()
                         return
                     elif selected_option == "flappy_bird":
                         flappy_menu.flappy_menu()

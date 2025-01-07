@@ -1,8 +1,8 @@
 import pygame
-import time
 import random
-import read
+import read as rd
 import sys
+import os
 
 pygame.init()
 
@@ -56,7 +56,10 @@ def lost_menu(selected_option):
     
 def check(length_of_snake):
     if length_of_snake > 30:
-        backgrd2 = pygame.image.load("./utils/happy_face.jpg")
+        print(script_dir)
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        background_path = os.path.join(script_dir, "utils/happy_face.jpg")
+        backgrd2 = pygame.image.load(background_path)
         backgrd2 = pygame.transform.scale(backgrd2, (WIDTH, HEIGHT))
         screen.blit(backgrd2, (0,0))
         selected_option = "continue"
@@ -65,7 +68,7 @@ def check(length_of_snake):
 
         while 1:
             win_menu(selected_option)
-            x_dir, y_dir, pressed = read.parse_data()
+            x_dir, y_dir, pressed = rd.parse_data()
 
             if y_dir == "up":
                 selected_option = "continue"
@@ -101,14 +104,18 @@ def gameLoop():
     foodx = round(random.randrange(0, WIDTH - BLOCK_SIZE) / 20.0) * 20.0
     foody = round(random.randrange(0, HEIGHT - BLOCK_SIZE) / 20.0) * 20.0
 
-    background = pygame.image.load("./utils/snake.png")
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    background_path = os.path.join(script_dir, "utils/snake.png")
+    background = pygame.image.load(background_path)
     background = pygame.transform.scale(background, (WIDTH, HEIGHT))
 
     while not game_over:
 
         while game_close:
             #dispare sarpele
-            backgrd = pygame.image.load("./utils/sad_face.jpg")
+            script_dir = os.path.dirname(os.path.abspath(__file__))
+            background_path = os.path.join(script_dir, "utils/sad_face.jpg")
+            backgrd = pygame.image.load(background_path)
             backgrd = pygame.transform.scale(backgrd, (WIDTH, HEIGHT))
             screen.blit(backgrd, (0,0))
 
@@ -117,7 +124,7 @@ def gameLoop():
 
             while 1:
                 lost_menu(selected_option)
-                x_dir, y_dir, pressed = read.parse_data()
+                x_dir, y_dir, _ = rd.parse_data()
 
                 if y_dir == "up":
                     selected_option = "again"
@@ -136,7 +143,7 @@ def gameLoop():
                                 sys.exit()
                 pygame.display.flip()
 
-        x_dir, y_dir, pressed = read.parse_data()
+        x_dir, y_dir, _ = rd.parse_data()
 
         if x_dir == "left":
             x_change = -BLOCK_SIZE
