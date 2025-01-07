@@ -1,9 +1,8 @@
-
 import pygame
 import random
 import time
-import serial
-import re
+import read_flappy as rd
+import os
 
 from sys import exit
 
@@ -13,15 +12,16 @@ clock = pygame.time.Clock()
 WIDTH, HEIGHT = 550, 720
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 
-background = pygame.image.load("./Minimalistic-Arcade-Games/flappy_bird_game/utils/background.png")
-bird_upflap = pygame.image.load("./Minimalistic-Arcade-Games/flappy_bird_game/utils/bird_up.png")
-ground = pygame.image.load("./Minimalistic-Arcade-Games/flappy_bird_game/utils/ground.png")
-pipe_bottom = pygame.image.load("./Minimalistic-Arcade-Games/flappy_bird_game/utils/pipe_bottom.png")
-pipe_top = pygame.image.load("./Minimalistic-Arcade-Games/flappy_bird_game/utils/pipe_top.png")
-game_over = pygame.image.load("./Minimalistic-Arcade-Games/flappy_bird_game/utils/game_over.png")
+script_dir = os.path.dirname(os.path.abspath(__file__))
+background = pygame.image.load(os.path.join(script_dir, "utils/background.png"))
+bird_upflap = pygame.image.load(os.path.join(script_dir, "utils/bird_up.png"))
+ground = pygame.image.load(os.path.join(script_dir, "utils/ground.png"))
+pipe_bottom = pygame.image.load(os.path.join(script_dir, "utils/pipe_bottom.png"))
+pipe_top = pygame.image.load(os.path.join(script_dir, "utils/pipe_top.png"))
+game_over = pygame.image.load(os.path.join(script_dir, "utils/game_over.png"))
 
 
-speed = 1;
+speed = 1
 score = 0
 font = pygame.font.SysFont('comicsans', 26)
 menu_font = pygame.font.SysFont('monospace', 40)
@@ -87,7 +87,6 @@ class Pipe(pygame.sprite.Sprite):
             score = score + 0.5
 
 def flappy_main():
-    ser = serial.Serial('COM3', 115200)
     x = 0
     y = 520
     timer = 0
@@ -110,19 +109,13 @@ def flappy_main():
         window.blit(background, (0, 0))
         user_input = False
 
-        if ser.in_waiting > 0:
-            line = ser.readline().decode('utf-8').strip()
-            data = line.strip(" []").split(", ")
-            try:
-                x_dir, y_dir, button = map(int, data)
-            except ValueError:
-                continue
-            if y_dir < 400:
-                user_input = True
-            else:
-                user_input = False
+        y_dir = rd.parse_data()
+        if y_dir < 400:
+            user_input = True
+        else:
+            user_input = False
 
-        clock.tick(60);
+        clock.tick(60)
 
         if len(ground) < 2:
             ground.add(Ground(WIDTH, y))
@@ -150,7 +143,6 @@ def flappy_main():
             time.sleep(1)
             window.fill((0,0,0))
             window.blit(background, (0,0))
-            ser.close()
 
         if timer <= 0 and bird.sprite.alive == True:
             x_top = 550

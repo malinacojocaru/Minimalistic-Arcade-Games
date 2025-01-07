@@ -1,7 +1,10 @@
 import pygame
 import sys
 import snake
-import read
+import read as rd
+import os
+
+
 
 WIDTH = 800
 HEIGHT = 800
@@ -15,7 +18,9 @@ pygame.display.set_caption("Menu")
 
 def draw_menu(selected_option):
 
-    background = pygame.image.load("./utils/snake.png")
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    background_path = os.path.join(script_dir, "utils/snake.png")
+    background = pygame.image.load(background_path)
     background = pygame.transform.scale(background, (WIDTH, HEIGHT))
     screen.blit(background, (0,0))
     
@@ -33,14 +38,14 @@ def draw_menu(selected_option):
     quit_rect = quit_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 50))
     screen.blit(quit_surface, quit_rect)
 
-def main_menu():
+def snake_menu():
     selected_option = "play"
     running = True
     
     while running:
         draw_menu(selected_option)
         
-        x_dir, y_dir, pressed = read.parse_data()
+        _, y_dir, _ = rd.parse_data()
 
         if y_dir == "up":
             selected_option = "play"
@@ -61,6 +66,5 @@ def main_menu():
         
         pygame.display.flip()
 
-#imi trebuie asta ca sa nu se execute direct la import in menu_all
 if __name__ == "__main__":
-    main_menu()
+    snake_menu()

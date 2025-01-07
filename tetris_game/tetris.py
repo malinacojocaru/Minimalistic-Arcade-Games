@@ -187,7 +187,3 @@ def main():
 	if lost:
 		game.game_over(window)
 		pygame.time.wait(2000)
-
-if __name__ == "__main__":
-	import tetris_menu
-	tetris_menu.menu()

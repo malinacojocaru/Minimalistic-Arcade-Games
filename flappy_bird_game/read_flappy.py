@@ -32,21 +32,5 @@ def parse_data():
             button = smooth_data(previous_values[2], button)
 
             previous_values = [x, y, button]
-            x_dir = 'center'
-            y_dir = 'center'
-            pressed = False
 
-            if x < 2000:
-                x_dir = 'left'
-            elif x > 64000:
-                x_dir = 'right'
-            if y < 2000:
-                y_dir = 'up'
-            elif y > 64000:
-                y_dir = 'down'
-            if button < 200:
-                pressed = True
-            else:
-                pressed = False
-
-            return x_dir, y_dir, pressed
+            return y
