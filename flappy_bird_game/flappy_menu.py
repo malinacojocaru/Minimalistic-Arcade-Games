@@ -4,9 +4,6 @@ from sys import exit
 import flappy_bird
 import os
 
-PORT = '/dev/ttyACM0'
-BAUDRATE = 115200
-
 font = pygame.font.SysFont('comicsans', 26)
 menu_font = pygame.font.SysFont('monospace', 40)
 
